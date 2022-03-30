@@ -106,7 +106,7 @@ public class WeaponHolder : MonoBehaviour
         //refill ammo here
         equippedWeapon.StartReloading();
         playerController.isReloading = true;
-        playerAnimator.SetBool(isReloadingHash, true);
+        playerAnimator.SetBool(isReloadingHash, true);        
 
         InvokeRepeating(nameof(StopReloading), 0, 0.1f);
     }
