@@ -30,4 +30,5 @@ public class HealthComponent : MonoBehaviour, IDamageable
             Destroy();
         }
     }
+
 }

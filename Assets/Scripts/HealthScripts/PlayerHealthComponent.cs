@@ -10,4 +10,5 @@ public class PlayerHealthComponent : HealthComponent
         base.Start();
         PlayerEvents.InvokeOnHealthInitialized(this);
     }
+
 }

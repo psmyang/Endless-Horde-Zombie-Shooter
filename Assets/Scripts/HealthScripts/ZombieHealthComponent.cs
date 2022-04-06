@@ -16,4 +16,3 @@ public class ZombieHealthComponent : HealthComponent
         zombieStateMachine.ChangeState(ZombieStateType.Dying);
     }
 }
-
