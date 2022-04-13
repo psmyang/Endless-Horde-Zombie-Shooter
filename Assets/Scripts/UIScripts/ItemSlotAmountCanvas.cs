@@ -43,4 +43,3 @@ public class ItemSlotAmountCanvas : MonoBehaviour
         if (Item) Item.OnAmountChange -= OnAmountChange;
     }
 }
-

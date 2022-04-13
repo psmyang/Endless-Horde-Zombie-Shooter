@@ -4,43 +4,48 @@ using UnityEngine;
 
 public class AK47Component : WeaponComponent
 {
+    // Start is called before the first frame update
     Vector3 hitLocation;
-    protected override void FireWeapon()
-    {     
 
-        if (weaponStats.bulletsInClip > 0 && !isReloading)
+    protected override void FireWeapon()
+    {
+
+        if (weaponStats.bulletsInClip > 0 && !isReloading && !weaponHolder.playerController.isRunning)
         {
             base.FireWeapon();
             if (firingEffect)
             {
                 firingEffect.Play();
+
             }
-            Ray screenRay = mainCamera.ViewportPointToRay(new Vector2(0.5f, 0.5f));
-            if (Physics.Raycast(screenRay, out RaycastHit hit, weaponStats.fireDistance, weaponStats.weaponHitLayers))
-            {
+            Ray screenRay = mainCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+            if (Physics.Raycast(screenRay, out RaycastHit hit, weaponStats.fireDistance, weaponStats.weaponHitLayers)) {
+
                 hitLocation = hit.point;
+
                 DealDamage(hit);
+
                 Vector3 hitDirection = hit.point - mainCamera.transform.position;
                 Debug.DrawRay(mainCamera.transform.position, hitDirection.normalized * weaponStats.fireDistance, Color.red, 1);
             }
+            print("Bullet count: " + weaponStats.bulletsInClip);
         }
-        else if(weaponStats.bulletsInClip <= 0)
+        else if (weaponStats.bulletsInClip <= 0)
         {
-            //trigger a reload when no bullets left in clip
             weaponHolder.StartReloading();
         }
-
-
     }
 
     void DealDamage(RaycastHit hitInfo)
     {
         IDamageable damageable = hitInfo.collider.GetComponent<IDamageable>();
         damageable?.TakeDamage(weaponStats.damage);
+
+
     }
 
     private void OnDrawGizmos()
     {
-        Gizmos.DrawWireSphere(hitLocation, 0.1f);
+        Gizmos.DrawWireSphere(hitLocation, 0.2f);
     }
 }

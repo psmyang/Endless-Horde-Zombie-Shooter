@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum WeaponType
-{ 
+{
     None, Pistol, MachineGun
 }
 
 public enum WeaponFiringPattern
-{ 
+{
     SemiAuto, FullAuto, ThreeShotBurst, FiveShotBurst, PumpAction
 }
 
 [System.Serializable]
-public struct WeaponStats {
+public struct WeaponStats
+{
     public WeaponType weaponType;
     public WeaponFiringPattern firingPattern;
     public string weaponName;
@@ -22,36 +23,62 @@ public struct WeaponStats {
     public int clipSize;
     public float fireStartDelay;
     public float fireRate;
+    public WeaponFiringPattern weaponFiringPattern;
     public float fireDistance;
     public bool repeating;
     public LayerMask weaponHitLayers;
     public int totalBullets;
-    //bool dumpAmmoOnReload = false;
+
 }
 
 public class WeaponComponent : MonoBehaviour
 {
     public Transform gripLocation;
-    public WeaponStats weaponStats;
+    public Transform firingEffectLocation;
 
     protected WeaponHolder weaponHolder;
     [SerializeField]
     protected ParticleSystem firingEffect;
 
-    public bool isFiring;
-    public bool isReloading;
+    [SerializeField]
+    public WeaponStats weaponStats;
 
-
+    public bool isFiring = false;
+    public bool isReloading = false;
     protected Camera mainCamera;
+    // Start is called before the first frame update
+    void Start()
+    {
+        
+    }
 
     private void Awake()
     {
         mainCamera = Camera.main;
+        //firingEffect.gameObject.transform.parent = firingEffectLocation;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
     }
 
     public void Initialize(WeaponHolder _weaponHolder)
     {
         weaponHolder = _weaponHolder;
+
+    }
+
+    //decide whether it is automatic or semi-automatic here
+    public void Initialize(WeaponHolder _weaponHolder, WeaponScriptable weaponScriptable)
+    {
+        weaponHolder = _weaponHolder;
+
+        if (weaponScriptable)
+        {
+            weaponStats = weaponScriptable.weaponStats;
+        }
     }
 
     public virtual void StartFiringWeapon()
@@ -73,38 +100,40 @@ public class WeaponComponent : MonoBehaviour
     {
         isFiring = false;
         CancelInvoke(nameof(FireWeapon));
-        if (firingEffect && firingEffect.isPlaying)
+        if (firingEffect.isPlaying)
         {
             firingEffect.Stop();
         }
     }
 
     protected virtual void FireWeapon()
-    {        
+    {
+        //print("Firing weapon!");
         weaponStats.bulletsInClip--;
-        //print(weaponStats.bulletsInClip);
     }
-
+    //deal with ammo counts and maybe particle effects
     public virtual void StartReloading()
     {
         isReloading = true;
         ReloadWeapon();
     }
+
     public virtual void StopReloading()
     {
         isReloading = false;
     }
 
-    //set ammo counts here
     protected virtual void ReloadWeapon()
     {
-        //check to see if there is a firing effect and stop it
-        if (firingEffect && firingEffect.isPlaying)
+        //if theres a firing effect hide it here
+        if (firingEffect.isPlaying)
         {
             firingEffect.Stop();
         }
+        // if there's a firing effect, hide it here
 
         int bulletsToReload = weaponStats.clipSize - weaponStats.totalBullets;
+
         if (bulletsToReload < 0)
         {
             weaponStats.totalBullets -= (weaponStats.clipSize - weaponStats.bulletsInClip);
@@ -115,52 +144,7 @@ public class WeaponComponent : MonoBehaviour
             weaponStats.bulletsInClip = weaponStats.totalBullets;
             weaponStats.totalBullets = 0;
         }
-    }
-    /*
-     *   protected virtual void ReloadWeapon()
 
-  {
-
-    // Check to see if there is if there is a firing effect and stop it.
-
-    if (firingEffect && firingEffect.isPlaying)
-
-      firingEffect.Stop();
-
-
-
-    int bulletsToFillClip = stats.dumpAmmoOnReload ? stats.clipSize : stats.clipSize - stats.bulletsInClip;
-
-    int bulletsLeftAfter = stats.totalBullets - bulletsToFillClip;
-
-
-
-    if (bulletsLeftAfter >= 0)
-
-    {
-
-      if (stats.dumpAmmoOnReload)
-
-        stats.bulletsInClip = 0;
-
-      stats.bulletsInClip += bulletsToFillClip;
-
-      stats.totalBullets -= bulletsToFillClip;
 
     }
-
-    else
-
-    {
-
-      stats.bulletsInClip += stats.totalBullets;
-
-      stats.totalBullets = 0;
-
-    }
-
-  }
-     * */
-
-
 }

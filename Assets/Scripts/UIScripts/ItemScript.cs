@@ -55,4 +55,3 @@ public abstract class ItemScript : ScriptableObject
         OnAmountChange?.Invoke();
     }
 }
-

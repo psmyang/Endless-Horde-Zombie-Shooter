@@ -35,4 +35,9 @@ public class ItemDisplayPanel : MonoBehaviour
         RectTransform.DetachChildren();
     }
 
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
 }

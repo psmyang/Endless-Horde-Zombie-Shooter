@@ -33,11 +33,12 @@ public class ItemSlotEquippedCanvas : MonoBehaviour
         ShowWidget();
         Equipable.OnEquipStatusChange += OnEquipmentChange;
         OnEquipmentChange();
+
     }
 
     private void OnEquipmentChange()
     {
-        EnabledImage.gameObject.SetActive(Equipable.equipped);
+        //EnabledImage.gameObject.SetActive(Equipable.Equipped);
     }
 
     private void OnDisable()
